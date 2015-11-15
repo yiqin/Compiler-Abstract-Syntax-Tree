@@ -1,0 +1,61 @@
+Question 1: Propose a simple data structure to allow the compiler to represent and handle internally an assembly code.
+
+Answer: 
+
+In the stack machine, any expression is transformed into a postfix order. Varialbes are pushed to the stack. When it meets operators, varialbes popped from the stack. Symbol class is proposed to allow the compiler to represent and handle the assembly code. It's in symbol_table.hpp. Details are shown below.
+
+Symbol class has three properties: 	
+```
+	int int_value;
+	std::string name;
+	Type type;
+```
+
+`name` is the symbol name of the variable which is also used in the symbol table. 
+
+`type` is the type of the symbol. In our case, we have two types varialbe and constant integer. 
+
+`int_value` is the value of the integer.
+
+
+If a symbol object is the variable type, the name of the object will be set to the variable name, and the int_value of the object will not be set. The compiler will get the address of the object from the symbol table, when this symbol object is popped from the stack. 
+
+If a symbol object is the constant integer type, the name won't be set, but the int_value of the object will be set to the value of the constant integer. 
+
+
+- Code
+
+class Symbol
+{
+public:
+	const std::string get_name() {
+		return name;
+	}
+	const void set_name(std::string value) {
+		name = value;
+	}
+	const Type get_type() {
+		return type;
+	}
+	const void set_type(Type value) {
+		type = value;
+	}
+	const std::string get_type_str() {
+		if (type == Type::INT || type == Type::CONST_INT) {
+			return "int";
+		}
+	}
+
+	const int get_int_value() {
+		return int_value;
+	}
+	const void set_int_value(int value) {
+		int_value = value;
+	}
+	// std::string code;
+
+protected:
+	int int_value;
+	std::string name;
+	Type type;
+};

@@ -435,8 +435,8 @@ static const yytype_int8 yyrhs[] =
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint16 yyrline[] =
 {
-       0,    44,    44,    45,    48,    52,    73,    93,    97,   129,
-     160,   164,   195,   228,   232,   254,   268
+       0,    44,    44,    45,    48,    52,    73,    91,    95,   127,
+     158,   162,   193,   226,   230,   252,   266
 };
 #endif
 
@@ -1390,31 +1390,29 @@ yyreduce:
       (yyval.int_val) = (yyvsp[(1) - (1)].int_val);
 
       // Traverse the tree.
-      cout << "############ " << endl;
+      // cout << "############ " << endl;
 
-      root->generate_code();
+      // root->generate_code();
 
 
 
-      cout << "############ " << endl;
+      // cout << "############ " << endl;
 
       // printf function.
-      cout << "pop %eax" << "    # display the value calling the function printf "<< endl;
-      cout << "movl %eax, %esi" << endl;
-      cout << "$.LCO, %edi" << endl;
-      cout << "movl $0, %eax" << endl;
-      cout << "call printf" << endl;
+      cout << "push $.LC0" << "    # display the value calling the function printf "<< endl;
+      cout << "call _printf" << endl;
+
 
     ;}
     break;
 
   case 7:
-#line 93 "calc.y"
+#line 91 "calc.y"
     {;}
     break;
 
   case 8:
-#line 97 "calc.y"
+#line 95 "calc.y"
     { 
         // Pop two symbol from the stack machine
         Node* node_2 = stack_machine.back();
@@ -1450,7 +1448,7 @@ yyreduce:
     break;
 
   case 9:
-#line 129 "calc.y"
+#line 127 "calc.y"
     { 
         // Pop two symbol from the stack machine
         Node* node_2 = stack_machine.back();
@@ -1485,12 +1483,12 @@ yyreduce:
     break;
 
   case 10:
-#line 160 "calc.y"
+#line 158 "calc.y"
     { (yyval.int_val) = (yyvsp[(1) - (1)].int_val); ;}
     break;
 
   case 11:
-#line 164 "calc.y"
+#line 162 "calc.y"
     { 
         // Pop two symbol from the stack machine
         Node* node_2 = stack_machine.back();
@@ -1517,7 +1515,7 @@ yyreduce:
         stack_machine.push_back(node_result);
         root = node_result;
 
-        cout << "imul %edx %eax" << endl;
+        cout << "imul %edx, %eax" << endl;
         cout << "push %eax" << endl;
 
         (yyval.int_val) = (yyvsp[(1) - (3)].int_val) * (yyvsp[(3) - (3)].int_val); 
@@ -1525,7 +1523,7 @@ yyreduce:
     break;
 
   case 12:
-#line 195 "calc.y"
+#line 193 "calc.y"
     {
         // Pop two symbol from the stack machine
         Node* node_2 = stack_machine.back();
@@ -1562,12 +1560,12 @@ yyreduce:
     break;
 
   case 13:
-#line 228 "calc.y"
+#line 226 "calc.y"
     { (yyval.int_val) = (yyvsp[(1) - (1)].int_val); ;}
     break;
 
   case 14:
-#line 232 "calc.y"
+#line 230 "calc.y"
     {
         // get the local variable fromt the symbol table
         if (symbol_table.is_variable_defined(*(yyvsp[(1) - (1)].op_val))) {
@@ -1593,7 +1591,7 @@ yyreduce:
     break;
 
   case 15:
-#line 254 "calc.y"
+#line 252 "calc.y"
     { 
         (yyval.int_val) = (yyvsp[(1) - (1)].int_val); 
 
@@ -1611,13 +1609,13 @@ yyreduce:
     break;
 
   case 16:
-#line 268 "calc.y"
+#line 266 "calc.y"
     { (yyval.int_val) = (yyvsp[(2) - (3)].int_val); ;}
     break;
 
 
 /* Line 1267 of yacc.c.  */
-#line 1621 "calc.tab.c"
+#line 1619 "calc.tab.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -1831,7 +1829,7 @@ yyreturn:
 }
 
 
-#line 271 "calc.y"
+#line 269 "calc.y"
 
 
 int yyerror(string s)

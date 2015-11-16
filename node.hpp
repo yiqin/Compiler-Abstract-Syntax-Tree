@@ -31,7 +31,8 @@ public:
 			}
 
 			right_operand->generate_code();
-			std::cout << "movl %eax %ecx" <<std::endl;
+			// std::cout << "movl %eax %ecx" <<std::endl;
+			
 		}
 		
 	}

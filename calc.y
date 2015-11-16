@@ -74,20 +74,18 @@ intermediate:
       $$ = $1;
 
       // Traverse the tree.
-      cout << "############ " << endl;
+      // cout << "############ " << endl;
 
-      root->generate_code();
+      // root->generate_code();
 
 
 
-      cout << "############ " << endl;
+      // cout << "############ " << endl;
 
       // printf function.
-      cout << "pop %eax" << "    # display the value calling the function printf "<< endl;
-      cout << "movl %eax, %esi" << endl;
-      cout << "$.LCO, %edi" << endl;
-      cout << "movl $0, %eax" << endl;
-      cout << "call printf" << endl;
+      cout << "push $.LC0" << "    # display the value calling the function printf "<< endl;
+      cout << "call _printf" << endl;
+
 
     }
     | {}
@@ -187,7 +185,7 @@ term:
         stack_machine.push_back(node_result);
         root = node_result;
 
-        cout << "imul %edx %eax" << endl;
+        cout << "imul %edx, %eax" << endl;
         cout << "push %eax" << endl;
 
         $$ = $1 * $3; 

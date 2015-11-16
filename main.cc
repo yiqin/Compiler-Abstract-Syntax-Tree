@@ -13,14 +13,20 @@ int main(int argc, char **argv)
     exit( 1 );
   }
   
-  cout << ".LC0:\n.string \"%d\"" << endl;
-  cout << "main:" << endl;
+
+  cout << ".globl _main" << endl;
+  cout << ".text" << endl;
+  cout << "_main:" << endl;
+  cout << "push %ebp" << endl;
+  cout << "movl %esp, %ebp" << endl;
   
   yyparse();
 
   cout << "movl $0, %eax" << endl;
   cout << "leave" << endl;
   cout << "ret" << endl;
+
+  cout << ".LC0:\n.asciz \"%d\n\"" << endl;
 
   return 0;
 }

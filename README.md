@@ -1,33 +1,16 @@
-Question 2
+Question 3 (b)
 =======
 
-It's in x86 Assembly/GAS Syntax.
+It's in x86 Assembly/GAS Syntax. The assembly code is directly executable.
 
-Type
-```
-./calc <testCase.txt
-```
-to run the test case.
+1. Type ```make```
+
+2. Type ```./calc <testCase.txt >testCase.s ``` to run the test case.
+
+3. Type ```gcc -m32 testCase.s -o testCase ``` to build the executable file.
+
+4. Type ```./testCase``` to run the executable file.
 
 Type ``` make clean ``` to clean files.
 
-
-Assumptions
-=======
-1. When a variable is instantiate and is assigned with an int, the compiler push the int to the stack, and the stack machine pops the int out and assign it to the variable.
-
-For example
-```
-a := 1;
-
-push const int 1
-assign variable a with 1
-```
-
-2. The code is based on the exercise 1 in the Assignment 4.
-
-
-3. right operand pushed to stack first and thus is at the bottom when pop
-
-4. The instruction set is x86.
 

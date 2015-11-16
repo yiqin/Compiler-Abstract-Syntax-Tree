@@ -112,7 +112,6 @@ exp:
         
         symbol_result->set_int_value(int_value_result);
         node_result->symbol = symbol_result;
-        node_result->is_operation = true;
 
         node_result->operation = OPERATION::plus;
         node_result->left_operand = node_1;
@@ -143,7 +142,6 @@ exp:
         int int_value_result = node_1->symbol->get_int_value() - node_2->symbol->get_int_value();
         symbol_result->set_int_value(int_value_result);
         node_result->symbol = symbol_result;
-        node_result->is_operation = true;
 
         node_result->operation = OPERATION::minus;
         node_result->left_operand = node_1;
@@ -178,7 +176,6 @@ term:
         int int_value_result = node_1->symbol->get_int_value() * node_2->symbol->get_int_value();
         symbol_result->set_int_value(int_value_result);
         node_result->symbol = symbol_result;
-        node_result->is_operation = true;
 
         node_result->operation = OPERATION::mult;
         node_result->left_operand = node_1;
@@ -209,7 +206,6 @@ term:
         int int_value_result = node_1->symbol->get_int_value() / node_2->symbol->get_int_value();
         symbol_result->set_int_value(int_value_result);
         node_result->symbol = symbol_result;
-        node_result->is_operation = true;
 
         node_result->operation = OPERATION::divide;
         node_result->left_operand = node_1;

@@ -11,8 +11,6 @@ enum class OPERATION {
 class Node
 {
 public:
-	bool is_operation;
-
 	OPERATION operation;
 	Symbol* symbol;
 	Node* left_operand;
@@ -20,9 +18,10 @@ public:
 
 	int depth = 0;
 
+	// Generate assembly code.
 	void generate_code() {
 		if (!left_operand || !right_operand) {
-			// epecial case
+			// special case
 			if (depth == 0) {
 				std::cout << "movl " << symbol->get_assembly_code() << ", %eax" << std::endl;
 			}

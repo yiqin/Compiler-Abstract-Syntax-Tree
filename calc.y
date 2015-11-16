@@ -53,8 +53,8 @@ intermediate:
         $$ = $3; 
 
         stack_machine.pop_back();
-        cout << "pop %eax" << endl;
-        cout << "movl %eax, " << local_variable_offset << "(%ebp)" << "    # " << "assign " << *$1 << endl;
+        // cout << "pop %eax" << endl;
+        cout << "movl $" << $3 << ", " << local_variable_offset << "(%ebp)" << "    # " << "assign " << *$1 << endl;
         
         // Create a new symbol and put it into the symbol table.
         Symbol* new_symbol = new Symbol();
@@ -67,6 +67,13 @@ intermediate:
 
         symbol_table.add(*$1, new_symbol);
 
+        // printf function.
+        cout << "push " << new_symbol->get_address() << endl;
+        cout << "push $.LC0" << "    # display the value calling the function printf "<< endl;
+        cout << "call _printf" << endl;
+
+        root = new Node();
+
         // Update the offset
         local_variable_offset += -4;
       }
@@ -74,19 +81,14 @@ intermediate:
       $$ = $1;
 
       // Traverse the tree.
-      // cout << "############ " << endl;
-
-      // root->generate_code();
-
-
-
-      // cout << "############ " << endl;
+      root->generate_code();
 
       // printf function.
+      cout << "push %eax" << endl;
       cout << "push $.LC0" << "    # display the value calling the function printf "<< endl;
       cout << "call _printf" << endl;
 
-
+      root = new Node();
     }
     | {}
     ;
@@ -96,11 +98,11 @@ exp:
         // Pop two symbol from the stack machine
         Node* node_2 = stack_machine.back();
         stack_machine.pop_back();
-        cout << "pop %eax" << endl;
+        // cout << "pop %eax" << endl;
 
         Node* node_1 = stack_machine.back();
         stack_machine.pop_back();
-        cout << "pop %edx" << endl;
+        // cout << "pop %edx" << endl;
 
         Node* node_result = new Node();
         Symbol* symbol_result = new Symbol();
@@ -119,8 +121,8 @@ exp:
         stack_machine.push_back(node_result);
         root = node_result;
 
-        cout << "addl %edx, %eax" << endl;
-        cout << "push %eax " << endl;
+        // cout << "addl %edx, %eax" << endl;
+        // cout << "push %eax " << endl;
 
         $$ = $1 + $3;
       }
@@ -128,11 +130,11 @@ exp:
         // Pop two symbol from the stack machine
         Node* node_2 = stack_machine.back();
         stack_machine.pop_back();
-        cout << "pop %eax" << endl;
+        // cout << "pop %eax" << endl;
         
         Node* node_1 = stack_machine.back();
         stack_machine.pop_back();
-        cout << "pop %edx" << endl;
+        // cout << "pop %edx" << endl;
 
         Node* node_result = new Node();
         Symbol* symbol_result = new Symbol();
@@ -150,8 +152,8 @@ exp:
         stack_machine.push_back(node_result);
         root = node_result;
 
-        cout << "subl %edx, %eax" << endl;
-        cout << "push %eax" << endl;
+        // cout << "subl %edx, %eax" << endl;
+        // cout << "push %eax" << endl;
 
         $$ = $1 - $3; 
       }
@@ -163,11 +165,11 @@ term:
         // Pop two symbol from the stack machine
         Node* node_2 = stack_machine.back();
         stack_machine.pop_back();
-        cout << "pop %eax" << endl;
+        // cout << "pop %eax" << endl;
 
         Node* node_1 = stack_machine.back();
         stack_machine.pop_back();
-        cout << "pop %edx" << endl;
+        // cout << "pop %edx" << endl;
 
         Node* node_result = new Node();
         Symbol* symbol_result = new Symbol();
@@ -185,8 +187,8 @@ term:
         stack_machine.push_back(node_result);
         root = node_result;
 
-        cout << "imul %edx, %eax" << endl;
-        cout << "push %eax" << endl;
+        // cout << "imul %edx, %eax" << endl;
+        // cout << "push %eax" << endl;
 
         $$ = $1 * $3; 
       }
@@ -194,11 +196,11 @@ term:
         // Pop two symbol from the stack machine
         Node* node_2 = stack_machine.back();
         stack_machine.pop_back();
-        cout << "pop %ecx" << endl;
+        // cout << "pop %ecx" << endl;
 
         Node* node_1 = stack_machine.back();
         stack_machine.pop_back();
-        cout << "pop %eax" << endl;
+        // cout << "pop %eax" << endl;
 
         Node* node_result = new Node();
         Symbol* symbol_result = new Symbol();
@@ -217,9 +219,9 @@ term:
         stack_machine.push_back(node_result);
         root = node_result;
 
-        cout << "cltd" << endl;
-        cout << "idivl %ecx" << "    # %eax <- %eax / %ecx, %edx <- %eax % %ecx" <<endl;
-        cout << "push %eax" << endl;
+        // cout << "cltd" << endl;
+        // cout << "idivl %ecx" << "    # %eax <- %eax / %ecx, %edx <- %eax % %ecx" <<endl;
+        // cout << "push %eax" << endl;
 
         $$ = $1 / $3; 
       }
@@ -231,18 +233,18 @@ final_state:
         // get the local variable fromt the symbol table
         if (symbol_table.is_variable_defined(*$1)) {
 
-/*
           Symbol *tmp_symbol; 
           tmp_symbol = symbol_table.get_symbol(*$1);
 
           $$ = tmp_symbol->get_int_value();
           
           Node *new_node = new Node();
-          new_node->symbol = new_symbol;
+          new_node->symbol = tmp_symbol;
           
           stack_machine.push_back(new_node);
-          cout << "push " << tmp_symbol->get_address() << "    # get " << tmp_symbol->get_name()<< endl;
-*/
+          root = new_node;
+          // cout << "push " << tmp_symbol->get_address() << "    # get " << tmp_symbol->get_name()<< endl;
+
         } else {
           cout << "ERROR: " <<*$1 << " has not been initialized." << endl;
           exit(1);
@@ -261,7 +263,8 @@ final_state:
         new_node->symbol = new_symbol;
 
         stack_machine.push_back(new_node);
-        cout << "push $" << $1 << endl;
+        root = new_node;
+        // cout << "push $" << $1 << endl;
     }
     | LEFT_PARENTHESIS exp RIGHT_PARENTHESIS { $$ = $2; }
     ;

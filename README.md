@@ -1,4 +1,4 @@
-Question 3 (b)
+Compiler: Abstract Syntax Tree
 =======
 
 It's in x86 Assembly/GAS Syntax. The assembly code is directly executable.
@@ -15,6 +15,7 @@ Type ``` make clean ``` to clean files.
 
 
 Note:
+=========
 1. We build the Abstract Syntax Tree first. In the clac.y, we have ```Node* root``` to track the root of the AST. Then we traverse the nodes. During the travering, we generate the assembly code.
 
 2. Node class is in the node.hpp file. function generate_code is to find the subnode recursely. Node 
@@ -32,6 +33,7 @@ Note:
 		return "";
 	};
 ```
+
 
 4. A sepcial case is the depth of AST is 0. For example:
 ```

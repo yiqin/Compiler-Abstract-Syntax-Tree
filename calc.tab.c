@@ -101,9 +101,11 @@ int yyerror(char *s);
 int yylex(void);
 Symbol_Table symbol_table;
 
-vector<Symbol*> stack_machine;
+vector<Node*> stack_machine;
 
 int local_variable_offset = -4;
+
+Node* root;
 
 
 
@@ -127,13 +129,13 @@ int local_variable_offset = -4;
 
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 typedef union YYSTYPE
-#line 13 "calc.y"
+#line 15 "calc.y"
 {
   int		int_val;
   string*	op_val;
 }
 /* Line 193 of yacc.c.  */
-#line 137 "calc.tab.c"
+#line 139 "calc.tab.c"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1
@@ -146,7 +148,7 @@ typedef union YYSTYPE
 
 
 /* Line 216 of yacc.c.  */
-#line 150 "calc.tab.c"
+#line 152 "calc.tab.c"
 
 #ifdef short
 # undef short
@@ -431,10 +433,10 @@ static const yytype_int8 yyrhs[] =
 };
 
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
-static const yytype_uint8 yyrline[] =
+static const yytype_uint16 yyrline[] =
 {
-       0,    42,    42,    43,    46,    50,    71,    82,    86,   109,
-     132,   136,   159,   183,   187,   205,   216
+       0,    44,    44,    45,    48,    52,    73,    93,    97,   129,
+     160,   164,   195,   228,   232,   254,   268
 };
 #endif
 
@@ -1346,19 +1348,19 @@ yyreduce:
   switch (yyn)
     {
         case 3:
-#line 43 "calc.y"
+#line 45 "calc.y"
     { 
         // cout << $1 << "; "  << endl;
       ;}
     break;
 
   case 4:
-#line 46 "calc.y"
+#line 48 "calc.y"
     {;}
     break;
 
   case 5:
-#line 50 "calc.y"
+#line 52 "calc.y"
     { 
         (yyval.int_val) = (yyvsp[(3) - (3)].int_val); 
 
@@ -1383,9 +1385,18 @@ yyreduce:
     break;
 
   case 6:
-#line 71 "calc.y"
+#line 73 "calc.y"
     { 
       (yyval.int_val) = (yyvsp[(1) - (1)].int_val);
+
+      // Traverse the tree.
+      cout << "############ " << endl;
+
+      root->generate_code();
+
+
+
+      cout << "############ " << endl;
 
       // printf function.
       cout << "pop %eax" << "    # display the value calling the function printf "<< endl;
@@ -1398,29 +1409,38 @@ yyreduce:
     break;
 
   case 7:
-#line 82 "calc.y"
+#line 93 "calc.y"
     {;}
     break;
 
   case 8:
-#line 86 "calc.y"
+#line 97 "calc.y"
     { 
         // Pop two symbol from the stack machine
-        Symbol* symbol_2 = stack_machine.back();
+        Node* node_2 = stack_machine.back();
         stack_machine.pop_back();
         cout << "pop %eax" << endl;
 
-        Symbol* symbol_1 = stack_machine.back();
+        Node* node_1 = stack_machine.back();
         stack_machine.pop_back();
         cout << "pop %edx" << endl;
 
+        Node* node_result = new Node();
         Symbol* symbol_result = new Symbol();
-        symbol_result->set_type(Type::CONST_INT);
+        // node_result->set_type(Type::CONST_INT);
 
-        int int_value_result = symbol_1->get_int_value() + symbol_2->get_int_value();
+        int int_value_result = node_1->symbol->get_int_value() + node_2->symbol->get_int_value();
+        
         symbol_result->set_int_value(int_value_result);
+        node_result->symbol = symbol_result;
+        node_result->is_operation = true;
 
-        stack_machine.push_back(symbol_result);
+        node_result->operation = OPERATION::plus;
+        node_result->left_operand = node_1;
+        node_result->right_operand = node_2;
+
+        stack_machine.push_back(node_result);
+        root = node_result;
 
         cout << "addl %edx, %eax" << endl;
         cout << "push %eax " << endl;
@@ -1430,24 +1450,32 @@ yyreduce:
     break;
 
   case 9:
-#line 109 "calc.y"
+#line 129 "calc.y"
     { 
         // Pop two symbol from the stack machine
-        Symbol* symbol_2 = stack_machine.back();
+        Node* node_2 = stack_machine.back();
         stack_machine.pop_back();
         cout << "pop %eax" << endl;
         
-        Symbol* symbol_1 = stack_machine.back();
+        Node* node_1 = stack_machine.back();
         stack_machine.pop_back();
         cout << "pop %edx" << endl;
 
+        Node* node_result = new Node();
         Symbol* symbol_result = new Symbol();
-        symbol_result->set_type(Type::CONST_INT);
+        // symbol_result->set_type(Type::CONST_INT);
         
-        int int_value_result = symbol_1->get_int_value() - symbol_2->get_int_value();
+        int int_value_result = node_1->symbol->get_int_value() - node_2->symbol->get_int_value();
         symbol_result->set_int_value(int_value_result);
+        node_result->symbol = symbol_result;
+        node_result->is_operation = true;
 
-        stack_machine.push_back(symbol_result);
+        node_result->operation = OPERATION::minus;
+        node_result->left_operand = node_1;
+        node_result->right_operand = node_2;
+
+        stack_machine.push_back(node_result);
+        root = node_result;
 
         cout << "subl %edx, %eax" << endl;
         cout << "push %eax" << endl;
@@ -1457,29 +1485,37 @@ yyreduce:
     break;
 
   case 10:
-#line 132 "calc.y"
+#line 160 "calc.y"
     { (yyval.int_val) = (yyvsp[(1) - (1)].int_val); ;}
     break;
 
   case 11:
-#line 136 "calc.y"
+#line 164 "calc.y"
     { 
         // Pop two symbol from the stack machine
-        Symbol* symbol_2 = stack_machine.back();
+        Node* node_2 = stack_machine.back();
         stack_machine.pop_back();
         cout << "pop %eax" << endl;
 
-        Symbol* symbol_1 = stack_machine.back();
+        Node* node_1 = stack_machine.back();
         stack_machine.pop_back();
         cout << "pop %edx" << endl;
 
+        Node* node_result = new Node();
         Symbol* symbol_result = new Symbol();
-        symbol_result->set_type(Type::CONST_INT);
+        // symbol_result->set_type(Type::CONST_INT);
         
-        int int_value_result = symbol_1->get_int_value() * symbol_2->get_int_value();
+        int int_value_result = node_1->symbol->get_int_value() * node_2->symbol->get_int_value();
         symbol_result->set_int_value(int_value_result);
+        node_result->symbol = symbol_result;
+        node_result->is_operation = true;
 
-        stack_machine.push_back(symbol_result);
+        node_result->operation = OPERATION::mult;
+        node_result->left_operand = node_1;
+        node_result->right_operand = node_2;
+
+        stack_machine.push_back(node_result);
+        root = node_result;
 
         cout << "imul %edx %eax" << endl;
         cout << "push %eax" << endl;
@@ -1489,24 +1525,33 @@ yyreduce:
     break;
 
   case 12:
-#line 159 "calc.y"
+#line 195 "calc.y"
     {
         // Pop two symbol from the stack machine
-        Symbol* symbol_2 = stack_machine.back();
+        Node* node_2 = stack_machine.back();
         stack_machine.pop_back();
         cout << "pop %ecx" << endl;
 
-        Symbol* symbol_1 = stack_machine.back();
+        Node* node_1 = stack_machine.back();
         stack_machine.pop_back();
         cout << "pop %eax" << endl;
 
+        Node* node_result = new Node();
         Symbol* symbol_result = new Symbol();
-        symbol_result->set_type(Type::CONST_INT);
+        // symbol_result->set_type(Type::CONST_INT);
         
-        int int_value_result = symbol_1->get_int_value() / symbol_2->get_int_value();
+        int int_value_result = node_1->symbol->get_int_value() / node_2->symbol->get_int_value();
         symbol_result->set_int_value(int_value_result);
+        node_result->symbol = symbol_result;
+        node_result->is_operation = true;
 
-        stack_machine.push_back(symbol_result);
+        node_result->operation = OPERATION::divide;
+        node_result->left_operand = node_1;
+        node_result->right_operand = node_2;
+
+
+        stack_machine.push_back(node_result);
+        root = node_result;
 
         cout << "cltd" << endl;
         cout << "idivl %ecx" << "    # %eax <- %eax / %ecx, %edx <- %eax % %ecx" <<endl;
@@ -1517,24 +1562,28 @@ yyreduce:
     break;
 
   case 13:
-#line 183 "calc.y"
+#line 228 "calc.y"
     { (yyval.int_val) = (yyvsp[(1) - (1)].int_val); ;}
     break;
 
   case 14:
-#line 187 "calc.y"
+#line 232 "calc.y"
     {
         // get the local variable fromt the symbol table
         if (symbol_table.is_variable_defined(*(yyvsp[(1) - (1)].op_val))) {
 
+/*
           Symbol *tmp_symbol; 
-          tmp_symbol = symbol_table.get_symbol(*(yyvsp[(1) - (1)].op_val));
+          tmp_symbol = symbol_table.get_symbol(*$1);
 
-          (yyval.int_val) = tmp_symbol->get_int_value();
-
-          stack_machine.push_back(tmp_symbol);
+          $$ = tmp_symbol->get_int_value();
+          
+          Node *new_node = new Node();
+          new_node->symbol = new_symbol;
+          
+          stack_machine.push_back(new_node);
           cout << "push " << tmp_symbol->get_address() << "    # get " << tmp_symbol->get_name()<< endl;
-
+*/
         } else {
           cout << "ERROR: " <<*(yyvsp[(1) - (1)].op_val) << " has not been initialized." << endl;
           exit(1);
@@ -1544,7 +1593,7 @@ yyreduce:
     break;
 
   case 15:
-#line 205 "calc.y"
+#line 254 "calc.y"
     { 
         (yyval.int_val) = (yyvsp[(1) - (1)].int_val); 
 
@@ -1553,19 +1602,22 @@ yyreduce:
         new_symbol->set_type(Type::CONST_INT);
         new_symbol->set_int_value((yyvsp[(1) - (1)].int_val));
 
-        stack_machine.push_back(new_symbol);
+        Node *new_node = new Node();
+        new_node->symbol = new_symbol;
+
+        stack_machine.push_back(new_node);
         cout << "push $" << (yyvsp[(1) - (1)].int_val) << endl;
     ;}
     break;
 
   case 16:
-#line 216 "calc.y"
+#line 268 "calc.y"
     { (yyval.int_val) = (yyvsp[(2) - (3)].int_val); ;}
     break;
 
 
 /* Line 1267 of yacc.c.  */
-#line 1569 "calc.tab.c"
+#line 1621 "calc.tab.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -1779,7 +1831,7 @@ yyreturn:
 }
 
 
-#line 219 "calc.y"
+#line 271 "calc.y"
 
 
 int yyerror(string s)

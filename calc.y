@@ -4,9 +4,11 @@ int yyerror(char *s);
 int yylex(void);
 Symbol_Table symbol_table;
 
-vector<Symbol*> stack_machine;
+vector<Node*> stack_machine;
 
 int local_variable_offset = -4;
+
+Node* root;
 
 %}
 
@@ -71,6 +73,15 @@ intermediate:
     | exp { 
       $$ = $1;
 
+      // Traverse the tree.
+      cout << "############ " << endl;
+
+      root->generate_code();
+
+
+
+      cout << "############ " << endl;
+
       // printf function.
       cout << "pop %eax" << "    # display the value calling the function printf "<< endl;
       cout << "movl %eax, %esi" << endl;
@@ -85,21 +96,30 @@ intermediate:
 exp:		
 		  exp PLUS term	{ 
         // Pop two symbol from the stack machine
-        Symbol* symbol_2 = stack_machine.back();
+        Node* node_2 = stack_machine.back();
         stack_machine.pop_back();
         cout << "pop %eax" << endl;
 
-        Symbol* symbol_1 = stack_machine.back();
+        Node* node_1 = stack_machine.back();
         stack_machine.pop_back();
         cout << "pop %edx" << endl;
 
+        Node* node_result = new Node();
         Symbol* symbol_result = new Symbol();
-        symbol_result->set_type(Type::CONST_INT);
+        // node_result->set_type(Type::CONST_INT);
 
-        int int_value_result = symbol_1->get_int_value() + symbol_2->get_int_value();
+        int int_value_result = node_1->symbol->get_int_value() + node_2->symbol->get_int_value();
+        
         symbol_result->set_int_value(int_value_result);
+        node_result->symbol = symbol_result;
+        node_result->is_operation = true;
 
-        stack_machine.push_back(symbol_result);
+        node_result->operation = OPERATION::plus;
+        node_result->left_operand = node_1;
+        node_result->right_operand = node_2;
+
+        stack_machine.push_back(node_result);
+        root = node_result;
 
         cout << "addl %edx, %eax" << endl;
         cout << "push %eax " << endl;
@@ -108,21 +128,29 @@ exp:
       }
 		| exp MINUS term	{ 
         // Pop two symbol from the stack machine
-        Symbol* symbol_2 = stack_machine.back();
+        Node* node_2 = stack_machine.back();
         stack_machine.pop_back();
         cout << "pop %eax" << endl;
         
-        Symbol* symbol_1 = stack_machine.back();
+        Node* node_1 = stack_machine.back();
         stack_machine.pop_back();
         cout << "pop %edx" << endl;
 
+        Node* node_result = new Node();
         Symbol* symbol_result = new Symbol();
-        symbol_result->set_type(Type::CONST_INT);
+        // symbol_result->set_type(Type::CONST_INT);
         
-        int int_value_result = symbol_1->get_int_value() - symbol_2->get_int_value();
+        int int_value_result = node_1->symbol->get_int_value() - node_2->symbol->get_int_value();
         symbol_result->set_int_value(int_value_result);
+        node_result->symbol = symbol_result;
+        node_result->is_operation = true;
 
-        stack_machine.push_back(symbol_result);
+        node_result->operation = OPERATION::minus;
+        node_result->left_operand = node_1;
+        node_result->right_operand = node_2;
+
+        stack_machine.push_back(node_result);
+        root = node_result;
 
         cout << "subl %edx, %eax" << endl;
         cout << "push %eax" << endl;
@@ -135,21 +163,29 @@ exp:
 term:
       term MULT final_state { 
         // Pop two symbol from the stack machine
-        Symbol* symbol_2 = stack_machine.back();
+        Node* node_2 = stack_machine.back();
         stack_machine.pop_back();
         cout << "pop %eax" << endl;
 
-        Symbol* symbol_1 = stack_machine.back();
+        Node* node_1 = stack_machine.back();
         stack_machine.pop_back();
         cout << "pop %edx" << endl;
 
+        Node* node_result = new Node();
         Symbol* symbol_result = new Symbol();
-        symbol_result->set_type(Type::CONST_INT);
+        // symbol_result->set_type(Type::CONST_INT);
         
-        int int_value_result = symbol_1->get_int_value() * symbol_2->get_int_value();
+        int int_value_result = node_1->symbol->get_int_value() * node_2->symbol->get_int_value();
         symbol_result->set_int_value(int_value_result);
+        node_result->symbol = symbol_result;
+        node_result->is_operation = true;
 
-        stack_machine.push_back(symbol_result);
+        node_result->operation = OPERATION::mult;
+        node_result->left_operand = node_1;
+        node_result->right_operand = node_2;
+
+        stack_machine.push_back(node_result);
+        root = node_result;
 
         cout << "imul %edx %eax" << endl;
         cout << "push %eax" << endl;
@@ -158,21 +194,30 @@ term:
       }
     | term DIVIDE final_state {
         // Pop two symbol from the stack machine
-        Symbol* symbol_2 = stack_machine.back();
+        Node* node_2 = stack_machine.back();
         stack_machine.pop_back();
         cout << "pop %ecx" << endl;
 
-        Symbol* symbol_1 = stack_machine.back();
+        Node* node_1 = stack_machine.back();
         stack_machine.pop_back();
         cout << "pop %eax" << endl;
 
+        Node* node_result = new Node();
         Symbol* symbol_result = new Symbol();
-        symbol_result->set_type(Type::CONST_INT);
+        // symbol_result->set_type(Type::CONST_INT);
         
-        int int_value_result = symbol_1->get_int_value() / symbol_2->get_int_value();
+        int int_value_result = node_1->symbol->get_int_value() / node_2->symbol->get_int_value();
         symbol_result->set_int_value(int_value_result);
+        node_result->symbol = symbol_result;
+        node_result->is_operation = true;
 
-        stack_machine.push_back(symbol_result);
+        node_result->operation = OPERATION::divide;
+        node_result->left_operand = node_1;
+        node_result->right_operand = node_2;
+
+
+        stack_machine.push_back(node_result);
+        root = node_result;
 
         cout << "cltd" << endl;
         cout << "idivl %ecx" << "    # %eax <- %eax / %ecx, %edx <- %eax % %ecx" <<endl;
@@ -188,14 +233,18 @@ final_state:
         // get the local variable fromt the symbol table
         if (symbol_table.is_variable_defined(*$1)) {
 
+/*
           Symbol *tmp_symbol; 
           tmp_symbol = symbol_table.get_symbol(*$1);
 
           $$ = tmp_symbol->get_int_value();
-
-          stack_machine.push_back(tmp_symbol);
+          
+          Node *new_node = new Node();
+          new_node->symbol = new_symbol;
+          
+          stack_machine.push_back(new_node);
           cout << "push " << tmp_symbol->get_address() << "    # get " << tmp_symbol->get_name()<< endl;
-
+*/
         } else {
           cout << "ERROR: " <<*$1 << " has not been initialized." << endl;
           exit(1);
@@ -210,7 +259,10 @@ final_state:
         new_symbol->set_type(Type::CONST_INT);
         new_symbol->set_int_value($1);
 
-        stack_machine.push_back(new_symbol);
+        Node *new_node = new Node();
+        new_node->symbol = new_symbol;
+
+        stack_machine.push_back(new_node);
         cout << "push $" << $1 << endl;
     }
     | LEFT_PARENTHESIS exp RIGHT_PARENTHESIS { $$ = $2; }

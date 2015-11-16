@@ -45,6 +45,16 @@ public:
 		address = value;
 	}
 
+	const std::string get_assembly_code() {
+		if (type == Type::CONST_INT) {
+			return "$"+std::to_string(int_value);
+		}
+		if (!address.empty()) {
+			return address;
+		}
+		return "";
+	};
+
 protected:
 	int int_value;
 	std::string name;

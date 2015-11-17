@@ -3,31 +3,27 @@
 _main:
 push %ebp
 movl %esp, %ebp
-movl $300, -4(%ebp)    # assign a
-push -4(%ebp)
-push $.LC0    # display the value calling the function printf 
-call _printf
-movl $1, %eax
-movl $2, %eax
-movl -4(%ebp), %eax
-movl $2, %ecx
-imul -4(%ebp), %ecx
-movl %ecx, %eax
 movl $1, %ecx
-addl %eax, %ecx
+addl $4, %ecx
+movl %ecx, %edx
+movl $2, %ecx
+imul %edx, %ecx
+movl %ecx, %edx
+movl $1, %ecx
+addl %edx, %ecx
+movl %ecx, %ecx
+addl $5, %ecx
+movl %ecx, %ecx
+subl $10, %ecx
 movl %ecx, %eax
-push %eax
-push $.LC0    # display the value calling the function printf 
-call _printf
-movl $1, -8(%ebp)    # assign b
-push -8(%ebp)
-push $.LC0    # display the value calling the function printf 
-call _printf
-movl -8(%ebp), %eax
-push %eax
-push $.LC0    # display the value calling the function printf 
-call _printf
-movl $100, %eax
+movl $3, %ecx
+cltd
+idivl %ecx    # %eax <- %eax / %ecx, %edx <- %eax % %ecx
+movl %eax, %ecx
+movl %ecx, %edx
+movl $1, %ecx
+addl %edx, %ecx
+movl %ecx, %eax
 push %eax
 push $.LC0    # display the value calling the function printf 
 call _printf

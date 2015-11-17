@@ -81,9 +81,10 @@ intermediate:
       $$ = $1;
 
       // Traverse the tree.
-      root->generate_code();
+      root->generate_code(1);
 
       // printf function.
+      cout << "movl %ecx, %eax" << endl;
       cout << "push %eax" << endl;
       cout << "push $.LC0" << "    # display the value calling the function printf "<< endl;
       cout << "call _printf" << endl;

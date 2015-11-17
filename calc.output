@@ -1,0 +1,327 @@
+Rules never reduced
+
+    3 input: /* empty */
+
+
+State 0 conflicts: 1 reduce/reduce
+State 13 conflicts: 1 reduce/reduce
+
+
+Grammar
+
+    0 $accept: input $end
+
+    1 input: /* empty */
+    2      | intermediate SEMICOLON input
+    3      | /* empty */
+
+    4 intermediate: VARIABLE ASSIGN exp
+    5             | exp
+    6             | /* empty */
+
+    7 exp: exp PLUS term
+    8    | exp MINUS term
+    9    | term
+
+   10 term: term MULT final_state
+   11     | term DIVIDE final_state
+   12     | final_state
+
+   13 final_state: VARIABLE
+   14            | INTEGER_LITERAL
+   15            | LEFT_PARENTHESIS exp RIGHT_PARENTHESIS
+
+
+Terminals, with rules where they appear
+
+$end (0) 0
+error (256)
+INTEGER_LITERAL (258) 14
+VARIABLE (259) 4 13
+PLUS (260) 7
+MINUS (261) 8
+MULT (262) 10
+DIVIDE (263) 11
+SEMICOLON (264) 2
+LEFT_PARENTHESIS (265) 15
+RIGHT_PARENTHESIS (266) 15
+ASSIGN (267) 4
+
+
+Nonterminals, with rules where they appear
+
+$accept (13)
+    on left: 0
+input (14)
+    on left: 1 2 3, on right: 0 2
+intermediate (15)
+    on left: 4 5 6, on right: 2
+exp (16)
+    on left: 7 8 9, on right: 4 5 7 8 15
+term (17)
+    on left: 10 11 12, on right: 7 8 9 10 11
+final_state (18)
+    on left: 13 14 15, on right: 10 11 12
+
+
+state 0
+
+    0 $accept: . input $end
+
+    INTEGER_LITERAL   shift, and go to state 1
+    VARIABLE          shift, and go to state 2
+    LEFT_PARENTHESIS  shift, and go to state 3
+
+    $end       reduce using rule 1 (input)
+    $end       [reduce using rule 3 (input)]
+    SEMICOLON  reduce using rule 6 (intermediate)
+    $default   reduce using rule 1 (input)
+
+    input         go to state 4
+    intermediate  go to state 5
+    exp           go to state 6
+    term          go to state 7
+    final_state   go to state 8
+
+
+state 1
+
+   14 final_state: INTEGER_LITERAL .
+
+    $default  reduce using rule 14 (final_state)
+
+
+state 2
+
+    4 intermediate: VARIABLE . ASSIGN exp
+   13 final_state: VARIABLE .
+
+    ASSIGN  shift, and go to state 9
+
+    $default  reduce using rule 13 (final_state)
+
+
+state 3
+
+   15 final_state: LEFT_PARENTHESIS . exp RIGHT_PARENTHESIS
+
+    INTEGER_LITERAL   shift, and go to state 1
+    VARIABLE          shift, and go to state 10
+    LEFT_PARENTHESIS  shift, and go to state 3
+
+    exp          go to state 11
+    term         go to state 7
+    final_state  go to state 8
+
+
+state 4
+
+    0 $accept: input . $end
+
+    $end  shift, and go to state 12
+
+
+state 5
+
+    2 input: intermediate . SEMICOLON input
+
+    SEMICOLON  shift, and go to state 13
+
+
+state 6
+
+    5 intermediate: exp .
+    7 exp: exp . PLUS term
+    8    | exp . MINUS term
+
+    PLUS   shift, and go to state 14
+    MINUS  shift, and go to state 15
+
+    $default  reduce using rule 5 (intermediate)
+
+
+state 7
+
+    9 exp: term .
+   10 term: term . MULT final_state
+   11     | term . DIVIDE final_state
+
+    MULT    shift, and go to state 16
+    DIVIDE  shift, and go to state 17
+
+    $default  reduce using rule 9 (exp)
+
+
+state 8
+
+   12 term: final_state .
+
+    $default  reduce using rule 12 (term)
+
+
+state 9
+
+    4 intermediate: VARIABLE ASSIGN . exp
+
+    INTEGER_LITERAL   shift, and go to state 1
+    VARIABLE          shift, and go to state 10
+    LEFT_PARENTHESIS  shift, and go to state 3
+
+    exp          go to state 18
+    term         go to state 7
+    final_state  go to state 8
+
+
+state 10
+
+   13 final_state: VARIABLE .
+
+    $default  reduce using rule 13 (final_state)
+
+
+state 11
+
+    7 exp: exp . PLUS term
+    8    | exp . MINUS term
+   15 final_state: LEFT_PARENTHESIS exp . RIGHT_PARENTHESIS
+
+    PLUS               shift, and go to state 14
+    MINUS              shift, and go to state 15
+    RIGHT_PARENTHESIS  shift, and go to state 19
+
+
+state 12
+
+    0 $accept: input $end .
+
+    $default  accept
+
+
+state 13
+
+    2 input: intermediate SEMICOLON . input
+
+    INTEGER_LITERAL   shift, and go to state 1
+    VARIABLE          shift, and go to state 2
+    LEFT_PARENTHESIS  shift, and go to state 3
+
+    $end       reduce using rule 1 (input)
+    $end       [reduce using rule 3 (input)]
+    SEMICOLON  reduce using rule 6 (intermediate)
+    $default   reduce using rule 1 (input)
+
+    input         go to state 20
+    intermediate  go to state 5
+    exp           go to state 6
+    term          go to state 7
+    final_state   go to state 8
+
+
+state 14
+
+    7 exp: exp PLUS . term
+
+    INTEGER_LITERAL   shift, and go to state 1
+    VARIABLE          shift, and go to state 10
+    LEFT_PARENTHESIS  shift, and go to state 3
+
+    term         go to state 21
+    final_state  go to state 8
+
+
+state 15
+
+    8 exp: exp MINUS . term
+
+    INTEGER_LITERAL   shift, and go to state 1
+    VARIABLE          shift, and go to state 10
+    LEFT_PARENTHESIS  shift, and go to state 3
+
+    term         go to state 22
+    final_state  go to state 8
+
+
+state 16
+
+   10 term: term MULT . final_state
+
+    INTEGER_LITERAL   shift, and go to state 1
+    VARIABLE          shift, and go to state 10
+    LEFT_PARENTHESIS  shift, and go to state 3
+
+    final_state  go to state 23
+
+
+state 17
+
+   11 term: term DIVIDE . final_state
+
+    INTEGER_LITERAL   shift, and go to state 1
+    VARIABLE          shift, and go to state 10
+    LEFT_PARENTHESIS  shift, and go to state 3
+
+    final_state  go to state 24
+
+
+state 18
+
+    4 intermediate: VARIABLE ASSIGN exp .
+    7 exp: exp . PLUS term
+    8    | exp . MINUS term
+
+    PLUS   shift, and go to state 14
+    MINUS  shift, and go to state 15
+
+    $default  reduce using rule 4 (intermediate)
+
+
+state 19
+
+   15 final_state: LEFT_PARENTHESIS exp RIGHT_PARENTHESIS .
+
+    $default  reduce using rule 15 (final_state)
+
+
+state 20
+
+    2 input: intermediate SEMICOLON input .
+
+    $default  reduce using rule 2 (input)
+
+
+state 21
+
+    7 exp: exp PLUS term .
+   10 term: term . MULT final_state
+   11     | term . DIVIDE final_state
+
+    MULT    shift, and go to state 16
+    DIVIDE  shift, and go to state 17
+
+    $default  reduce using rule 7 (exp)
+
+
+state 22
+
+    8 exp: exp MINUS term .
+   10 term: term . MULT final_state
+   11     | term . DIVIDE final_state
+
+    MULT    shift, and go to state 16
+    DIVIDE  shift, and go to state 17
+
+    $default  reduce using rule 8 (exp)
+
+
+state 23
+
+   10 term: term MULT final_state .
+
+    $default  reduce using rule 10 (term)
+
+
+state 24
+
+   11 term: term DIVIDE final_state .
+
+    $default  reduce using rule 11 (term)
